@@ -1,7 +1,10 @@
 services:
+  # Django Web Service
   - type: web
-    name: django-backend
+    name: vms-backend
     env: python
+    region: oregon
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn vms_backend.wsgi:application"
     envVars:
@@ -11,33 +14,56 @@ services:
         sync: false
       - key: SECRET_KEY
         generateValue: true
-      - key: DJANGO_SETTINGS_MODULE
-        value: myproject.settings
-      
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: RENDER
+        value: true
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 465
+      - key: EMAIL_USE_SSL
+        value: True
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+        
+  # Celery Worker
   - type: worker
-    name: celery-worker
+    name: vms-celery-worker
     env: python
+    plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "celery -A myproject worker --loglevel=info"
+    startCommand: "celery -A vms_backend worker --loglevel=info"
     envVars:
       - key: DATABASE_URL
         sync: false
       - key: REDIS_URL
         sync: false
         
-  - type: redis
-    name: redis
+  # Celery Beat (Scheduler)
+  - type: worker
+    name: vms-celery-beat
+    env: python
     plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A vms_backend beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+        
+  # Redis for Celery
+  - type: redis
+    name: vms-redis
+    plan: free
+    ipAllowList: []
     maxmemoryPolicy: noeviction
-```
-
-**Update requirements.txt:**
-```
-Django>=4.2
-gunicorn
-dj-database-url
-psycopg2-binary
-celery
-redis
-django-cors-headers
-whitenoise
