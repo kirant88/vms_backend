@@ -3,7 +3,7 @@ services:
     name: django-backend
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn myproject.wsgi:application"
+    startCommand: "gunicorn vms_backend.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
