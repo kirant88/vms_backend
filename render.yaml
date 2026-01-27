@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: django-backend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn myproject.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DJANGO_SETTINGS_MODULE
+        value: myproject.settings
+      
+  - type: worker
+    name: celery-worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A myproject worker --loglevel=info"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+        
+  - type: redis
+    name: redis
+    plan: free
+    maxmemoryPolicy: noeviction
+```
+
+**Update requirements.txt:**
+```
+Django>=4.2
+gunicorn
+dj-database-url
+psycopg2-binary
+celery
+redis
+django-cors-headers
+whitenoise
