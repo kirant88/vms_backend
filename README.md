@@ -350,3 +350,14 @@ Proprietary - All rights reserved
 ## Support
 
 For issues and questions, contact the development team.
+
+
+
+
+Email: kiran.tondchore@indi4.io
+Username: KiranT@1234
+First name: Kiran
+Last name: Tondchore
+Password: KiranT@1234
+Password (again): KiranT@1234
+Superuser created successfully.
