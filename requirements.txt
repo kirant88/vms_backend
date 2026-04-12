@@ -1,5 +1,5 @@
 # Django and Core Dependencies
-setuptools>=68.0.0
+setuptools==60.0.0
 Django==4.2.7
 djangorestframework==3.14.0
 django-cors-headers==4.3.1
