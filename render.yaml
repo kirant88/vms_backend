@@ -5,8 +5,8 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: "./build.sh"
-    startCommand: "gunicorn vms_backend.wsgi:application"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python manage.py migrate && python manage.py create_superuser && gunicorn vms_backend.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -34,7 +34,7 @@ services:
         sync: false
       - key: EMAIL_HOST_PASSWORD
         sync: false
-        
+
   # Celery Worker
   - type: worker
     name: vms-celery-worker
@@ -47,7 +47,7 @@ services:
         sync: false
       - key: REDIS_URL
         sync: false
-        
+
   # Celery Beat (Scheduler)
   - type: worker
     name: vms-celery-beat
@@ -60,7 +60,7 @@ services:
         sync: false
       - key: REDIS_URL
         sync: false
-        
+
   # Redis for Celery
   - type: redis
     name: vms-redis

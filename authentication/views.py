@@ -44,7 +44,7 @@ class VMSLoginAPIView(TokenObtainPairView):
             # Look up user by email (our USERNAME_FIELD) or username
             print(f"Login attempt for: {username}")
             user = User.objects.filter(Q(email=username) | Q(username=username)).first()
-            
+
             if user:
                 print(f"User found: {user.email}, is_staff: {user.is_staff}")
                 if user.check_password(password) and user.is_staff:
@@ -63,7 +63,6 @@ class VMSLoginAPIView(TokenObtainPairView):
                                 "first_name": user.first_name,
                                 "last_name": user.last_name,
                                 "is_staff": user.is_staff,
-                                "role": user.role,
                             },
                         }
                     )
@@ -231,33 +230,47 @@ class VMSChangePasswordAPIView(APIView):
 
         return Response({"success": True, "message": "Password changed successfully"})
 
+
 class IsSuperAdmin(IsAuthenticated):
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and getattr(request.user, 'role', None) == 'superadmin'
+        return (
+            super().has_permission(request, view)
+            and getattr(request.user, "role", None) == "superadmin"
+        )
+
 
 class AdminManagementView(APIView):
     permission_classes = [IsSuperAdmin]
 
     def get(self, request):
-        admins = User.objects.filter(role__in=['admin', 'superadmin']).values(
-            'id', 'username', 'email', 'first_name', 'last_name', 'role', 'created_at'
+        admins = User.objects.filter(role__in=["admin", "superadmin"]).values(
+            "id", "username", "email", "first_name", "last_name", "role", "created_at"
         )
         return Response({"success": True, "admins": list(admins)})
 
     def post(self, request):
         # Create new admin
-        email = request.data.get('email')
-        username = request.data.get('username')
-        password = request.data.get('password')
-        first_name = request.data.get('first_name', '')
-        last_name = request.data.get('last_name', '')
-        role = request.data.get('role', 'admin')
+        email = request.data.get("email")
+        username = request.data.get("username")
+        password = request.data.get("password")
+        first_name = request.data.get("first_name", "")
+        last_name = request.data.get("last_name", "")
+        role = request.data.get("role", "admin")
 
         if not email or not password or not username:
-            return Response({"success": False, "message": "Email, username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "success": False,
+                    "message": "Email, username and password are required",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if User.objects.filter(email=email).exists():
-            return Response({"success": False, "message": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"success": False, "message": "Email already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user = User.objects.create_user(
             username=username,
@@ -266,7 +279,7 @@ class AdminManagementView(APIView):
             first_name=first_name,
             last_name=last_name,
             role=role,
-            is_staff=True
+            is_staff=True,
         )
         return Response({"success": True, "message": "Admin created successfully"})
 
@@ -274,12 +287,19 @@ class AdminManagementView(APIView):
         try:
             admin = User.objects.get(id=admin_id)
             if admin == request.user:
-                return Response({"success": False, "message": "You cannot delete yourself"}, status=status.HTTP_400_BAD_REQUEST)
-            
+                return Response(
+                    {"success": False, "message": "You cannot delete yourself"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             admin.delete()
             return Response({"success": True, "message": "Admin deleted successfully"})
         except User.DoesNotExist:
-            return Response({"success": False, "message": "Admin not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"success": False, "message": "Admin not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
 
 class AdminResetPasswordView(APIView):
     permission_classes = [IsSuperAdmin]
@@ -287,14 +307,19 @@ class AdminResetPasswordView(APIView):
     def post(self, request, admin_id):
         try:
             admin = User.objects.get(id=admin_id)
-            new_password = request.data.get('password')
-            
+            new_password = request.data.get("password")
+
             if not new_password:
-                return Response({"success": False, "message": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"success": False, "message": "Password is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             admin.set_password(new_password)
             admin.save()
             return Response({"success": True, "message": "Password reset successfully"})
         except User.DoesNotExist:
-            return Response({"success": False, "message": "Admin not found"}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response(
+                {"success": False, "message": "Admin not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
