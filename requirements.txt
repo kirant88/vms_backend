@@ -1,21 +1,6 @@
 # Django and Core Dependencies
-Django==4.2.7
-djangorestframework==3.14.0
-django-cors-headers==4.3.1
-djangorestframework-simplejwt==5.3.0
-drf-spectacular==0.26.5
-django-filter==23.3
-dj-database-url==2.1.0
-# psycopg2-binary==2.9.9
-psycopg[binary]==3.1.18
-# QR Code and Image Processing
-qrcode==7.4.2
-# Use a newer Pillow version that has wheels for recent Python versions
-Pillow>=10.4.0
-
-# PDF Generation
-reportlab==4.0.4
 setuptools>=68.0.0
+Django==4.2.7
 openpyxl>=3.1.2
 
 # Async Task Processing
