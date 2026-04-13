@@ -136,9 +136,7 @@ if DEBUG:
 else:
     # Production - Specific origins only
     CORS_ALLOWED_ORIGINS = os.environ.get(
-        "CORS_ALLOWED_ORIGINS",
-        "http://localhost:5173",
-        "https://visitor-management-system-amber.vercel.app"
+        "CORS_ALLOWED_ORIGINS", "http://localhost:5173"
     ).split(",")
 
 CORS_ALLOW_CREDENTIALS = True
