@@ -368,4 +368,5 @@ First name: Kiran
 Last name: Tondchore
 Password: KiranT@1234
 Password (again): KiranT@1234
+Role:
 Superuser created successfully.
