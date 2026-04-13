@@ -361,3 +361,11 @@ Last name: Tondchore
 Password: KiranT@1234
 Password (again): KiranT@1234
 Superuser created successfully.
+
+Email: kirantondchore@gmail.com 
+Username: kirantondchore@gmail.com 
+First name: Kiran
+Last name: Tondchore
+Password: KiranT@1234
+Password (again): KiranT@1234
+Superuser created successfully.
