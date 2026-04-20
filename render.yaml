@@ -34,6 +34,19 @@ services:
         sync: false
       - key: EMAIL_HOST_PASSWORD
         sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: vms-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: vms-redis
+          property: connectionString
+
+      - key: CELERY_RESULT_BACKEND
+        value: django-db
 
   # Celery Worker
   - type: worker

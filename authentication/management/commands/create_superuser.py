@@ -6,20 +6,67 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = "Create default superuser if it does not exist"
+    help = "Create or update default superadmin"
 
     def handle(self, *args, **options):
-        if not User.objects.filter(is_superuser=True).exists():
-            with transaction.atomic():
-                user = User.objects.create_superuser(
-                    username="KiranT@1234",
-                    email="kiran.tondchore@indi4.io",
-                    password="KiranT@1234",
-                    first_name="Kiran",
-                    last_name="Tondchore",
-                )
+        email = "kiran.tondchore@indi4.io"
+        username = "kiran.tondchore@indi4.io"
+        password = "KiranT@1234"
+
+        with transaction.atomic():
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={
+                    "username": username,
+                    "first_name": "Kiran",
+                    "last_name": "Tondchore",
+                    "role": "superadmin",
+                    "is_verified": True,
+                },
+            )
+
+            if created:
+                user.set_password(password)
+                user.is_superuser = True
+                user.is_staff = True
+                user.save()
                 self.stdout.write(
-                    self.style.SUCCESS(f"Superuser created: {user.email}")
+                    self.style.SUCCESS(f"Superadmin created: {user.email}")
                 )
-        else:
-            self.stdout.write(self.style.WARNING("Superuser already exists"))
+                return
+
+            updated = False
+            if user.username != username:
+                user.username = username
+                updated = True
+            if user.first_name != "Kiran":
+                user.first_name = "Kiran"
+                updated = True
+            if user.last_name != "Tondchore":
+                user.last_name = "Tondchore"
+                updated = True
+            if user.role != "superadmin":
+                user.role = "superadmin"
+                updated = True
+            if not user.is_verified:
+                user.is_verified = True
+                updated = True
+            if not user.is_superuser:
+                user.is_superuser = True
+                updated = True
+            if not user.is_staff:
+                user.is_staff = True
+                updated = True
+
+            user.set_password(password)
+            updated = True
+
+            if updated:
+                user.save()
+                self.stdout.write(
+                    self.style.SUCCESS(f"Superadmin updated: {user.email}")
+                )
+            else:
+                self.stdout.write(
+                    self.style.SUCCESS(f"Superadmin already correct: {user.email}")
+                )
