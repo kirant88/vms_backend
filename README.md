@@ -355,7 +355,7 @@ For issues and questions, contact the development team.
 
 
 Email: kiran.tondchore@indi4.io
-Username: KiranT@1234
+Username: kiran.tondchore@indi4.io
 First name: Kiran
 Last name: Tondchore
 Password: KiranT@1234
