@@ -1,11 +1,26 @@
 from rest_framework import serializers
-from .models import Visitor, Department, VisitorLog
+from .models import Visitor, Department, VisitorLog, Host
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = "__all__"
+
+
+class HostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Host
+        fields = [
+            "id",
+            "name",
+            "email",
+            "contact_no",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class VisitorSerializer(serializers.ModelSerializer):

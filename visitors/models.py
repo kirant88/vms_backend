@@ -13,6 +13,24 @@ class Department(models.Model):
         return self.name
 
 
+class Host(models.Model):
+    """Master table for host information"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    contact_no = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
+
 class Visitor(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -152,7 +170,9 @@ class VisitorLog(models.Model):
     visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE, related_name="logs")
     action = models.CharField(max_length=20, choices=ACTION_CHOICES)
     timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
     notes = models.TextField(blank=True)
 
     class Meta:

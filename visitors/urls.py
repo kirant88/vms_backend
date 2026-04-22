@@ -45,8 +45,18 @@ urlpatterns = [
     ),
     path(
         "hosts/",
-        views.get_hosts,
-        name="get-hosts",
+        views.get_all_hosts,  # Updated to use database hosts instead of hardcoded
+        name="get-all-hosts",
+    ),
+    path(
+        "hosts/manage/",
+        views.HostListCreateView.as_view(),
+        name="host-list-create",
+    ),
+    path(
+        "hosts/manage/<uuid:id>/",
+        views.HostDetailView.as_view(),
+        name="host-detail",
     ),
     path(
         "bulk/template/download/",
